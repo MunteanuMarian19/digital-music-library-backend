@@ -1,28 +1,33 @@
 // app.js
 const express = require("express");
+const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const config = require("./config");
-const artistsRouter = require("./routes/artist"); // Ensure this path is correct
+const artistsRouter = require("./routes/artist");
+const albumRouter = require("./routes/album");
 
-const app = express();
 app.use(cors());
+app.use(express.json()); // Middleware to parse JSON bodies
+
+app.use("/api/artists", artistsRouter);
+app.use("/api/artists", albumRouter); // Using the same prefix for album routes
+
 app.use(bodyParser.json());
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send("Something broke!");
+});
 
 mongoose
   .connect(config.mongoURI, {
-    // Remove useNewUrlParser and useUnifiedTopology
-    // useNewUrlParser: true,
-    // useUnifiedTopology: true,
-    // Add new options for the new driver version
-    serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds instead of the default 30 seconds
+    serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
     socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
   })
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
-
-app.use("/api/artists", artistsRouter);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

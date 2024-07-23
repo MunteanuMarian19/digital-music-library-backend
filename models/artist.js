@@ -3,18 +3,18 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const SongSchema = new Schema({
-  title: String,
-  length: String,
+  title: { type: String, required: true },
+  length: { type: String, required: true }, // Duration in mm:ss format
 });
 
 const AlbumSchema = new Schema({
-  title: String,
-  description: String,
+  title: { type: String, required: true },
+  description: { type: String, required: true },
   songs: [SongSchema],
 });
 
 const ArtistSchema = new Schema({
-  name: String,
+  name: { type: String, required: true },
   albums: [AlbumSchema],
 });
 
